@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-/* -------------------- Tokens & Lexer  -------------------- */
+// Tokens y Lexer  
 
 enum class TokenType {
     CLASS, EXTENDS, INT, STRING, BOOL, METHOD, METHODMAIN, PRINT,
@@ -113,7 +113,7 @@ struct Lexer {
             char c = peek();
             if (c == '\0') { addToken(TokenType::END_OF_FILE, ""); break; }
 
-            // comments
+            // commentariod
             if (c == '/') {
                 if (peekNext() == '/') {
                     get(); get();
@@ -149,7 +149,7 @@ struct Lexer {
                 continue;
             }
 
-            // number
+            // numero
             if (isdigit((unsigned char)c)) {
                 string num;
                 while (isdigit((unsigned char)peek())) num.push_back(get());
@@ -157,7 +157,7 @@ struct Lexer {
                 continue;
             }
 
-            // identifiers and keywords
+            
             if (isIdentStart(c)) {
                 string id;
                 while (isIdentChar(peek())) id.push_back(get());
@@ -181,7 +181,7 @@ struct Lexer {
                 continue;
             }
 
-            // multi-char and single char ops
+            
             if (c == '=') {
                 if (peekNext() == '=') { get(); get(); addToken(TokenType::EQEQ, "=="); }
                 else { get(); addToken(TokenType::EQUAL, "="); }
@@ -230,14 +230,14 @@ struct Lexer {
 
 /* -------------------- AST Node -------------------- */
 struct AST {
-    string nodeType;                 // e.g., "Program", "Class", "Attribute", "Method", "If", ...
-    unordered_map<string,string> kv; // simple string properties (name, type, value)
+    string nodeType;                 
+    unordered_map<string,string> kv; 
     vector<AST*> children;
     int line = 0, col = 0;
     AST(const string &t=""): nodeType(t) {}
 };
 
-/* -------------------- Parser (recursive descent) -------------------- */
+//Parser
 
 struct Parser {
     vector<Token> &tokens;
@@ -256,7 +256,7 @@ struct Parser {
         throw runtime_error("Parse error");
     }
 
-    // program = { class } , methodMain ;
+    
     AST* parseProgram() {
         AST* root = new AST("Program");
         while (cur().type == TokenType::CLASS) {
@@ -289,10 +289,10 @@ struct Parser {
             } else if (cur().type == TokenType::METHOD) {
                 node->children.push_back(parseMethod());
             } else if (cur().type == TokenType::COMMENT) {
-                // skip doc-comments inside class
+                
                 idx++;
             } else {
-                // unknown member (error)
+                
                 Token c = cur();
                 cerr << "Error: miembro inesperado en clase '"<< name.lexeme <<"' linea " << c.line << " col " << c.col << "\n";
                 throw runtime_error("Parse error");
@@ -302,10 +302,10 @@ struct Parser {
         return node;
     }
 
-    // atributo = tipo, identificador, [ "=", expresion ], ";" ;
+    
     AST* parseAttribute() {
         Token tipoTok = cur(); idx++;
-        string tipoLex = tokenTypeName(tipoTok.type); // INT/STRING/BOOL token names
+        string tipoLex = tokenTypeName(tipoTok.type); 
         Token name = cur(); expect(TokenType::IDENT, "Nombre de atributo esperado");
         AST* a = new AST("Attribute");
         a->kv["name"] = name.lexeme;
@@ -313,7 +313,7 @@ struct Parser {
         a->line = name.line; a->col = name.col;
         if (match(TokenType::EQUAL)) {
             AST* expr = parseExpressionNode();
-            // store expression as child node "init"
+            
             AST* init = new AST("Init");
             init->kv["expr_type"] = expr->nodeType;
             init->children.push_back(expr);
@@ -323,7 +323,7 @@ struct Parser {
         return a;
     }
 
-    // metodo = "method", identificador, "{", { instruccion }, "}" ;
+    
     AST* parseMethod() {
         Token mt = cur(); expect(TokenType::METHOD, "Se esperaba 'method'");
         Token name = cur(); expect(TokenType::IDENT, "Nombre de metodo esperado");
@@ -338,7 +338,7 @@ struct Parser {
         return m;
     }
 
-    // methodMain = "methodMain", "{", { instruccion }, "}" ;
+    
     AST* parseMethodMain() {
         Token mt = cur(); expect(TokenType::METHODMAIN, "Se esperaba 'methodMain'");
         AST* m = new AST("MethodMain"); m->line = mt.line; m->col = mt.col;
@@ -352,12 +352,12 @@ struct Parser {
         return m;
     }
 
-    // instruction = asignacion | impresion | llamada | comentario | if | while | for | return
+    
     AST* parseInstruction() {
         Token c = cur();
         if (c.type == TokenType::COMMENT) { idx++; return nullptr; }
         if (c.type == TokenType::IDENT) {
-            // could be assignment or call
+            
             Token next = tokens.size() > idx+1 ? tokens[idx+1] : Token{TokenType::END_OF_FILE,"",0,0};
             if (next.type == TokenType::EQUAL) {
                 return parseAssignment();
@@ -451,18 +451,18 @@ struct Parser {
         Token tk = cur(); expect(TokenType::FOR, "for esperado");
         expect(TokenType::LPAREN, "esperado '(' en for");
         AST* node = new AST("For");
-        // optional init
+       
         if (cur().type == TokenType::IDENT) {
-            node->children.push_back(parseAssignment()); // note: assignment consumes semicolon
+            node->children.push_back(parseAssignment()); 
         } else {
             expect(TokenType::SEMICOLON, "esperado ';' en for (init)");
         }
-        // cond
+        
         if (cur().type != TokenType::SEMICOLON) {
             node->children.push_back(parseExpressionNode());
         }
         expect(TokenType::SEMICOLON, "esperado ';' en for (cond)");
-        // post
+        
         if (cur().type != TokenType::RPAREN) {
             if (cur().type == TokenType::IDENT) node->children.push_back(parseAssignment());
             else { /* simple skip */ }
@@ -493,17 +493,6 @@ struct Parser {
         return blk;
     }
 
-    /* Expression parsing with precedence:
-       expr = orExpr
-       orExpr = andExpr { "||" andExpr }
-       andExpr = equality { "&&" equality }
-       equality = comparison { (==|!=) comparison }
-       comparison = add { (<|>|<=|>=) add }
-       add = mul { (+|-) mul }
-       mul = unary { * unary }
-       unary = ('!'|'-') unary | primary
-       primary = NUMBER | STRING | IDENT | BOOLEAN | NULL | '(' expr ')' | list
-    */
 
     AST* parseExpressionNode() {
         return parseOr();
@@ -590,7 +579,7 @@ struct Parser {
         if (c.type == TokenType::NULL_LITERAL) { idx++; AST* n = new AST("Null"); return n; }
         if (c.type == TokenType::IDENT) { idx++; AST* n = new AST("Ident"); n->kv["name"] = c.lexeme; return n; }
         if (c.type == TokenType::LBRACKET) {
-            // list of strings (["I","O"])
+            
             match(TokenType::LBRACKET);
             AST* lst = new AST("List");
             if (cur().type == TokenType::STRING_LITERAL) {
@@ -613,7 +602,7 @@ struct Parser {
     }
 };
 
-/* -------------------- AST output (JSON-like) -------------------- */
+
 
 void writeJSON(AST* node, ostream &out, int indent=0) {
     string ind(indent,' ');
@@ -645,7 +634,7 @@ void writeJSON(AST* node, ostream &out, int indent=0) {
     }
 }
 
-/* -------------- main -------------- */
+
 
 int main(int argc, char** argv) {
     string filename = "mini-lenguaje.brik";
@@ -658,11 +647,11 @@ int main(int argc, char** argv) {
     stringstream buffer; buffer << in.rdbuf();
     string source = buffer.str();
 
-    // run lexer
+    
     Lexer lx(source);
     lx.tokenize();
 
-    // Optional: write tokens for debugging
+    
     ofstream tokout("tokens.txt");
     for (auto &t : lx.tokens) {
         tokout << t.line << ":" << t.col << " " << tokenTypeName(t.type) << " -> " << t.lexeme << "\n";
