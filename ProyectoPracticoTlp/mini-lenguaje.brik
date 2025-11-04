@@ -5,24 +5,22 @@ Class JUEGO{
     int puntos;
 
     method gameOver{
-        //juego terminado
-        print("gameOver") 
+        print("gameOver");
     }
     
 }
 
 Class TETRIS extends JUEGO{
 // atributos solo de tetris
-    string [] piezas = ["I","O","T","L","S","Z"];
+    string piezas = ["I","O","T","L","S","Z"];
     int nivel;
     int velocidadCaida;
-
     method asignarVelocidaCaida{
         // instrucciones para asignar velocidad de Caida
     }
     method siguientePieza{
-        // instruccion para la siguiente Pieza
-    }
+        // instruccion para siguientePieza
+    }  
     method sumarPuntos{
         // instrucciones para sumar Puntos
     }

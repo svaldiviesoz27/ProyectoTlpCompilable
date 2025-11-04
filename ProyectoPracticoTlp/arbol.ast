@@ -1,0 +1,219 @@
+{
+  "node": "Program",
+  "children": [
+    {
+      "node": "Class",
+      "props": {
+        "name": "JUEGO"
+      },
+      "children": [
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "int",
+            "name": "alturaTablero"
+          }
+        },
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "int",
+            "name": "anchoTablero"
+          }
+        },
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "int",
+            "name": "puntos"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "gameOver"
+          },
+          "children": [
+            {
+              "node": "Print",
+              "children": [
+                {
+                  "node": "String",
+                  "props": {
+                    "value": "gameOver"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "Class",
+      "props": {
+        "extends": "JUEGO",
+        "name": "TETRIS"
+      },
+      "children": [
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "string",
+            "name": "piezas"
+          },
+          "children": [
+            {
+              "node": "Init",
+              "children": [
+                {
+                  "node": "List",
+                  "children": [
+                    {
+                      "node": "String",
+                      "props": {
+                        "value": "I"
+                      }
+                    },
+                    {
+                      "node": "String",
+                      "props": {
+                        "value": "O"
+                      }
+                    },
+                    {
+                      "node": "String",
+                      "props": {
+                        "value": "T"
+                      }
+                    },
+                    {
+                      "node": "String",
+                      "props": {
+                        "value": "L"
+                      }
+                    },
+                    {
+                      "node": "String",
+                      "props": {
+                        "value": "S"
+                      }
+                    },
+                    {
+                      "node": "String",
+                      "props": {
+                        "value": "Z"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "int",
+            "name": "nivel"
+          }
+        },
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "int",
+            "name": "velocidadCaida"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "asignarVelocidaCaida"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "siguientePieza"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "sumarPuntos"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "nivelAlcanzado"
+          }
+        }
+      ]
+    },
+    {
+      "node": "Class",
+      "props": {
+        "extends": "JUEGO",
+        "name": "SNAKE"
+      },
+      "children": [
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "int",
+            "name": "velocidadDespazamiento"
+          }
+        },
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "string",
+            "name": "comida"
+          },
+          "children": [
+            {
+              "node": "Init",
+              "children": [
+                {
+                  "node": "Ident",
+                  "props": {
+                    "name": "manzana"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "node": "Attribute",
+          "props": {
+            "type": "int",
+            "name": "tamañoSerpiente"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "comer"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "modificarVelDespazamiento"
+          }
+        },
+        {
+          "node": "Method",
+          "props": {
+            "name": "mostrarTamaño"
+          }
+        }
+      ]
+    },
+    {
+      "node": "MethodMain"
+    }
+  ]
+}
