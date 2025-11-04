@@ -1,5 +1,3 @@
-// main_fixed.cpp  -- Lexer + Parser + AST writer (JSON) para tu mini-lenguaje.brik
-// Compilar: g++ -std=c++17 main_fixed.cpp -O2 -s -o main.exe
 
 #include <bits/stdc++.h>
 using namespace std;
@@ -616,9 +614,9 @@ struct Parser {
         return node;
     }
     
-    // (otras funciones idénticas al original, omitidas aquí por brevedad…)
 
-    // 🔧 FIX #2: nueva lógica dentro de parseAttribute()
+
+    // FIX #2: nueva lógica dentro de parseAttribute()
     AST* parseAttribute() {
         Token tipoTok = cur(); idx++;
         string tipoLex = tokenTypeName(tipoTok.type);
@@ -656,10 +654,6 @@ struct Parser {
         return a;
     }
 
-    // (el resto del parser es igual al original, sin cambios)
-};
-
-// (El resto del código — parseProgram, parseMethod, expresiones, writeJSON, main() — permanece igual)
 
 void writeJSON(AST* node, ostream &out, int indent=0) {
     string ind(indent,' ');
@@ -727,3 +721,6 @@ int main(int argc, char** argv) {
     }
     return 0;
 }
+
+
+
