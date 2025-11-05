@@ -1,0 +1,66 @@
+programa       = { clase } , metodoPrincipal ;
+
+clase          = "Class" , identificador , [ "extends" , identificador ] ,
+                 "{" , { miembro } , "}" ;
+
+miembro        = atributo | metodo ;
+
+atributo       = tipo , identificador , ";" 
+               | "string" , "[" , "]" , identificador , "=" , lista , ";" ;
+
+metodo         = "method" , identificador , "{" , { instruccion } , "}" ;
+
+metodoPrincipal= "methodMain" , "{" , { instruccion } , "}" ;
+
+tipo           = "int" | "string" | "bool" ;
+
+instruccion    = asignacion | impresion | llamada | comentario
+               | ifStmt | whileStmt | forStmt | returnStmt ;
+
+asignacion     = identificador , "=" , expresion , ";" ;
+
+impresion      = "print" , "(" , expresion , ")" , ";" ;
+
+llamada        = identificador , "(" , [ listaArgumentos ] , ")" , ";" ;
+
+comentario     = "/*" , { caracter } , "*/" | "//" , { caracter } ;
+
+ifStmt         = "if" , "(" , expresion , ")" , bloque , [ "else" , bloque ] ;
+
+whileStmt      = "while" , "(" , expresion , ")" , bloque ;
+
+forStmt        = "for" , "(" , [ asignacion ] , ";" , [ expresion ] , ";" ,
+                 [ asignacion ] , ")" , bloque ;
+
+returnStmt     = "return" , [ expresion ] , ";" ;
+
+bloque         = "{" , { instruccion } , "}" ;
+
+expresion      = comparacion , { ("&&" | "||") , comparacion } ;
+
+comparacion    = suma , { ("==" | "!=" | "<" | ">" | "<=" | ">=") , suma } ;
+
+suma           = termino , { ("+" | "-") , termino } ;
+
+termino        = factor , { "*" , factor } ;
+
+factor         = numero | cadena | booleano | identificador | lista 
+               | "null" | "(" , expresion , ")" ;
+
+lista          = "[" , [ cadena , { "," , cadena } ] , "]" ;
+
+listaArgumentos= expresion , { "," , expresion } ;
+
+identificador  = letra , { letra | digito | "_" } ;
+
+numero         = digito , { digito } ;
+
+cadena         = '"' , { caracter } , '"' ;
+
+booleano       = "true" | "false" ;
+
+letra          = "A"…"Z" | "a"…"z" | "_" ;
+
+digito         = "0"…"9" ;
+
+caracter       = ? cualquier símbolo válido excepto salto de línea o cierre ? ;
