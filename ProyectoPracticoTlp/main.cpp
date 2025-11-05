@@ -652,6 +652,7 @@ struct Parser {
         expect(TokenType::SEMICOLON, "Falta ';' después del atributo");
         return a;
     }
+};
 
 
 void writeJSON(AST* node, ostream &out, int indent=0) {
